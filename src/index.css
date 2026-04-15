@@ -1,0 +1,141 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-color: #0b0c10;
+  --text-main: #c5c6c7;
+  --primary: #66fcf1;
+  --primary-hover: #45a29e;
+  --accent: #ff4d4d;
+  --border-size: 3px;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: 'Press Start 2P', cursive, monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* 颗粒 CRT 网格背景特效 */
+  background-image: radial-gradient(circle, #222 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.arcade-container {
+  width: 90%;
+  max-width: 600px;
+  background: #1f2833;
+  border: var(--border-size) solid var(--primary);
+  box-shadow: 
+    10px 10px 0px 0px rgba(102, 252, 241, 0.4),
+    inset 0px 0px 20px rgba(0,0,0,0.8);
+  padding: 40px;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.pixel-btn {
+  background: transparent;
+  color: var(--primary);
+  border: var(--border-size) solid var(--primary);
+  padding: 15px 20px;
+  font-family: 'Menlo', 'Monaco', 'Courier New', 'Microsoft YaHei', monospace;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.1s;
+  box-shadow: 4px 4px 0px 0px rgba(102,252,241,0.3);
+  margin-top: 20px;
+  width: 100%;
+}
+
+.pixel-btn:hover {
+  background: var(--primary);
+  color: var(--bg-color);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px rgba(102,252,241,0.5);
+}
+
+.pixel-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,0);
+}
+
+.pixel-input {
+  background: #000;
+  color: var(--primary);
+  border: var(--border-size) solid var(--text-main);
+  padding: 15px;
+  font-family: 'Menlo', 'Monaco', 'Courier New', 'Microsoft YaHei', monospace;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-align: center;
+  width: 80%;
+  margin-bottom: 20px;
+  outline: none;
+}
+.pixel-input:focus { border-color: var(--primary); }
+
+.enemy-container {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 30px auto;
+  border: 3px dashed var(--text-main);
+  background: #000;
+  animation: float 2.5s ease-in-out infinite;
+}
+
+.enemy-img {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.question-box {
+  background: #fff;
+  color: #000;
+  padding: 20px;
+  border: var(--border-size) solid var(--text-main);
+  min-height: 80px;
+  line-height: 1.6;
+  font-family: 'Menlo', 'Monaco', 'Courier New', 'Microsoft YaHei', monospace;
+  font-weight: bold;
+  font-size: 1rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.review-section {
+  font-family: 'Menlo', 'Monaco', 'Courier New', 'Microsoft YaHei', monospace;
+  font-weight: bold;
+}
+
+.review-item {
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--text-main);
+  padding: 15px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.blink { animation: blink 1.2s infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-10px) scale(1.05); } }
