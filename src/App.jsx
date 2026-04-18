@@ -29,12 +29,14 @@ function App() {
           body: JSON.stringify({ action: 'GET_TOTAL_COUNT' })
         });
         const data = await res.json();
-        if (data.success && data.total) {
+        if (data.success && typeof data.total === 'number') {
           setMaxCoins(data.total);
         } else {
+          console.error("fetchMax returned false or non-number total:", data);
           setMaxCoins(99); 
         }
       } catch(e) {
+        console.error("fetchMax threw an error (likely CORS, Auth, or wrong URL):", e);
         setMaxCoins(15);
       }
     };
