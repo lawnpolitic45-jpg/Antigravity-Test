@@ -20,6 +20,28 @@ function App() {
   const [totalTime, setTotalTime] = useState(0);
   const [qTime, setQTime] = useState(0);
   const [runTimer, setRunTimer] = useState(false);
+  const [maxCoins, setMaxCoins] = useState(0);
+
+  useEffect(() => {
+    const fetchMax = async () => {
+      try {
+        const res = await fetch(ENV.GAS_URL || 'http://localhost:3000/mock', {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'GET_TOTAL_COUNT' })
+        });
+        const data = await res.json();
+        if (data.success && data.total) {
+          setMaxCoins(data.total);
+        } else {
+          setMaxCoins(99); 
+        }
+      } catch(e) {
+        setMaxCoins(15);
+      }
+    };
+    fetchMax();
+  }, []);
 
   useEffect(() => {
     let interval;
@@ -57,11 +79,13 @@ function App() {
     setTotalTime(0);
     setQTime(0);
 
+    const finalCoinCount = (coinCount === '' || coinCount < 5) ? 5 : coinCount;
+
     try {
       const res = await fetch(ENV.GAS_URL || 'http://localhost:3000/mock', {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'GET_QUESTIONS', count: coinCount })
+        body: JSON.stringify({ action: 'GET_QUESTIONS', count: finalCoinCount })
       });
       const data = await res.json();
       
@@ -159,19 +183,39 @@ function App() {
     return `${m}:${s}`;
   };
 
+  const handleCoinChange = (e) => {
+    let val = e.target.value === '' ? '' : parseInt(e.target.value);
+    if (val !== '' && maxCoins > 0 && val > maxCoins) val = maxCoins;
+    setCoinCount(val);
+  };
+  
+  const handleCoinBlur = () => {
+    if (coinCount === '' || coinCount < 5) setCoinCount(5);
+  };
+
+  const isGameMode = screen === 'GAME' && questions.length > 0;
+
   return (
-    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-      {screen === 'GAME' && questions.length > 0 && (
+    <div style={{ 
+      display: 'grid', 
+      gridTemplateColumns: isGameMode ? '1fr auto 1fr' : '1fr', 
+      alignItems: 'center', 
+      gap: '30px',
+      width: '100vw',
+      boxSizing: 'border-box',
+      padding: '0 20px'
+    }}>
+      {isGameMode && (
         <div style={{
+          gridColumn: '1',
+          justifySelf: 'end',
           background: '#1f2833',
           border: 'var(--border-size) solid var(--primary)',
           padding: '20px',
           boxShadow: '10px 10px 0px 0px rgba(102, 252, 241, 0.4), inset 0px 0px 20px rgba(0,0,0,0.8)',
           display: 'grid',
           gridTemplateColumns: 'repeat(5, 1fr)',
-          gap: '10px',
-          alignSelf: 'flex-start',
-          marginTop: '20px'
+          gap: '10px'
         }}>
           {questions.map((q, idx) => {
             const isAnswered = answers.some(a => a.questionId === q.questionId);
@@ -201,25 +245,34 @@ function App() {
         </div>
       )}
 
-      <div className="arcade-container">
+      <div className="arcade-container" style={{ gridColumn: isGameMode ? '2' : '1' }}>
       {screen === 'HOME' && (
         <>
           <h1 className="blink" style={{ color: 'var(--primary)', marginBottom: '50px' }}>
             PIXEL QUIZ QUEST
           </h1>
-          <p style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-            INSERT 
-            <input
-              type="number"
-              min="5"
-              value={coinCount}
-              onChange={(e) => setCoinCount(Math.max(5, parseInt(e.target.value) || 5))}
-              className="pixel-input"
-              style={{ width: '80px', margin: '0', padding: '10px' }}
-            />
-            COINS = {coinCount} QUESTIONS
-          </p>
-          <p style={{ marginBottom: '20px' }}>(TYPE YOUR ID)</p>
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+              INSERT 
+              <input
+                type="number"
+                min="5"
+                max={maxCoins > 0 ? maxCoins : undefined}
+                value={coinCount}
+                onChange={handleCoinChange}
+                onBlur={handleCoinBlur}
+                className="pixel-input"
+                style={{ width: '80px', margin: '0', padding: '10px' }}
+              />
+              COINS = {coinCount === '' ? 5 : coinCount} QUESTIONS
+            </div>
+            {maxCoins > 0 && (
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-main)', marginTop: '10px' }}>
+                (MAX = {maxCoins})
+              </div>
+            )}
+          </div>
+          <p style={{ marginBottom: '30px' }}>(TYPE YOUR ID)</p>
           <input 
             className="pixel-input" 
             placeholder="PLAYER_1"
@@ -283,8 +336,8 @@ function App() {
           </h1>
           
           <div style={{ margin: '30px 0', fontSize: '1.1rem', lineHeight: '2' }}>
-            <p>SCORE: <span style={{ color: 'var(--primary)' }}>{result.score}</span> / {questions.length} (正确率: {parseFloat(((result.score / questions.length) * 100).toFixed(2))}%)</p>
-            <p>总用时: {formatTime(totalTime)}</p>
+            <p>SCORE: <span style={{ color: 'var(--primary)' }}>{result.score}</span> / {questions.length} ({parseFloat(((result.score / questions.length) * 100).toFixed(2))}%)</p>
+            <p>TOTAL TIME: {formatTime(totalTime)}</p>
           </div>
 
           {result.evaluations && (
@@ -315,6 +368,8 @@ function App() {
         </div>
       )}
       </div>
+
+      {isGameMode && <div style={{ gridColumn: '3' }} />}
     </div>
   );
 }
