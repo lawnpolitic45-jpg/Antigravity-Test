@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './index.css';
 
 const ENV = {
-  GAS_URL: import.meta.env.VITE_GOOGLE_APP_SCRIPT_URL,
-  THRESHOLD: parseInt(import.meta.env.VITE_PASS_THRESHOLD || '3'),
-  Q_COUNT: parseInt(import.meta.env.VITE_QUESTION_COUNT || '5')
+  GAS_URL: import.meta.env.VITE_GOOGLE_APP_SCRIPT_URL
 };
 
 function App() {
@@ -16,7 +14,7 @@ function App() {
   const [result, setResult] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [avatars, setAvatars] = useState([]);
-  const [coinCount, setCoinCount] = useState(ENV.Q_COUNT);
+  const [coinCount, setCoinCount] = useState(5);
   const [totalTime, setTotalTime] = useState(0);
   const [qTime, setQTime] = useState(0);
   const [runTimer, setRunTimer] = useState(false);
@@ -141,7 +139,7 @@ function App() {
             action: 'SUBMIT_ANSWERS', 
             id: playerId,
             answers: newAnswers,
-            passThreshold: ENV.THRESHOLD
+            totalTime: totalTime
           })
         });
         const data = await res.json();
@@ -336,7 +334,7 @@ function App() {
           </h1>
           
           <div style={{ margin: '30px 0', fontSize: '1.1rem', lineHeight: '2' }}>
-            <p>SCORE: <span style={{ color: 'var(--primary)' }}>{result.score}</span> / {questions.length} ({parseFloat(((result.score / questions.length) * 100).toFixed(2))}%)</p>
+            <p>SCORE: <span style={{ color: 'var(--primary)' }}>{result.score}</span> / {questions.length} ({parseFloat(((result.score / questions.length) * 100).toFixed(1))}%)</p>
             <p>TOTAL TIME: {formatTime(totalTime)}</p>
           </div>
 

@@ -31,7 +31,7 @@
    - `回答`
 3. 将 **第一行 (Row 1)** 填上专属的表头：
    - 在 `题目` 工作表的第一行依次填入（A~G 列）：`题号`, `题目`, `A`, `B`, `C`, `D`, `解答`
-   - 在 `回答` 工作表的第一行依次填入（A~G 列）：`ID`, `闯关次数`, `总分`, `最高分`, `第一次通关分数`, `花了几次通关`, `最近游玩时间`
+   - 在 `回答` 工作表的第一行依次填入（A~F 列）：`ID`, `闯关次数`, `总分`, `最高分`, `最高分通关总用时`, `最近游玩时间`
 4. 电子表格的其余部分你现在可以填写你的选择题数据（答案请填写确切的大写 `A`、`B`、`C`、`D`）。
 
 ### Step 2: 建立 Google Apps Script (GAS)
@@ -56,13 +56,9 @@
 
 ```env
 VITE_GOOGLE_APP_SCRIPT_URL="在这里贴上你刚刚拿到的 Apps Script URL"
-VITE_PASS_THRESHOLD=3
-VITE_QUESTION_COUNT=5
 ```
 
 - `VITE_GOOGLE_APP_SCRIPT_URL`：GAS 的接口，前端通过收集游玩数据将其发送至此接口。
-- `VITE_PASS_THRESHOLD`：过关门槛（答对特定题数才算通关）。
-- `VITE_QUESTION_COUNT`：本场游戏随机抽出的题数。
 
 配置一切完成后，再重新执行 `npm run dev`，游戏就能顺利连接你的专属 Google Sheet 题库了！享受你的开发体验！
 
@@ -87,8 +83,6 @@ VITE_QUESTION_COUNT=5
 4. **新建 Repository secrets**：
    点击绿色的 **New repository secret** 按钮，依次添加 `.env.example` 中对应的参数：
    - `VITE_GOOGLE_APP_SCRIPT_URL`：填上刚才拿到的 GAS 链接（必备）
-   - `VITE_PASS_THRESHOLD`：过关门槛（如 `3`）
-   - `VITE_QUESTION_COUNT`：题数（如 `5`）
 
 5. **部署生效**：
    现在当你将代码推送到 `main` 分支时（或是进入仓库 Actions 手动触发 `Deploy to GitHub Pages` 工作流），GitHub Actions 就会自动读取你所设置的 Secrets，构建项目并发布到免费的 GitHub Pages 服务上！
